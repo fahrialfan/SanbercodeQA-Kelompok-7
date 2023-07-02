@@ -1,0 +1,115 @@
+import time
+import unittest
+from elementLocator import *
+from data import *
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import UnexpectedAlertPresentException
+from selenium.common.exceptions import NoAlertPresentException
+import warnings
+
+warnings.filterwarnings("ignore", category=ResourceWarning, message="unclosed file <_io.TextIOWrapper name='geckodriver.log' mode='a+' encoding='utf-8'>")
+
+
+class demoBlaze(unittest.TestCase):    
+
+    @classmethod
+    def setUpClass(cls):
+        cls.driver = webdriver.Firefox()
+        cls.driver.get("https://www.demoblaze.com/")
+
+    def testSignup(self):
+        wait = WebDriverWait(self.driver, 10)
+        signup_link = wait.until(EC.element_to_be_clickable(SignupPageLocators.SIGNUP_LINK))
+        self.driver.execute_script("arguments[0].click();", signup_link)
+        wait.until(EC.visibility_of_element_located(SignupPageLocators.SIGNUP_MODAL))
+        username_field = wait.until(EC.visibility_of_element_located(SignupPageLocators.USERNAME_FIELD))
+        self.driver.execute_script(f"arguments[0].value='{valid_username_sign}';", username_field)
+        password_field = wait.until(EC.visibility_of_element_located(SignupPageLocators.PASSWORD_FIELD))
+        password_field.send_keys(valid_password_sign)
+        self.driver.find_element(*SignupPageLocators.SIGNUP_BUTTON).click()
+        time.sleep(3)
+        try:
+            alert = self.driver.switch_to.alert
+            alert_text = alert.text
+            alert.accept()
+        except NoAlertPresentException:
+            print("No alert present")
+        self.driver.refresh()
+        time.sleep(5)
+    
+    def testSignupExistingUser(self):
+        wait = WebDriverWait(self.driver, 10)
+        signup_link = wait.until(EC.element_to_be_clickable(SignupPageLocators.SIGNUP_LINK))
+        self.driver.execute_script("arguments[0].click();", signup_link)
+        wait.until(EC.visibility_of_element_located(SignupPageLocators.SIGNUP_MODAL))
+        username_field = wait.until(EC.visibility_of_element_located(SignupPageLocators.USERNAME_FIELD))
+        self.driver.execute_script(f"arguments[0].value='{existing_username_sign}';", username_field)
+        password_field = wait.until(EC.visibility_of_element_located(SignupPageLocators.PASSWORD_FIELD))
+        password_field.send_keys(existing_password_sign)
+        self.driver.find_element(*SignupPageLocators.SIGNUP_BUTTON).click()
+        time.sleep(3)
+        try:
+            alert = self.driver.switch_to.alert
+            alert_text = alert.text
+            alert.accept()
+        except NoAlertPresentException:
+            print("No alert present")
+        self.driver.refresh()
+        time.sleep(5)
+        
+    def testSignupNullUsername(self):
+        wait = WebDriverWait(self.driver, 10)
+        signup_link = wait.until(EC.element_to_be_clickable(SignupPageLocators.SIGNUP_LINK))
+        self.driver.execute_script("arguments[0].click();", signup_link)
+        wait.until(EC.visibility_of_element_located(SignupPageLocators.SIGNUP_MODAL))
+        username_field = wait.until(EC.visibility_of_element_located(SignupPageLocators.USERNAME_FIELD))
+        self.driver.execute_script(f"arguments[0].value='{null_username_sign}';", username_field)
+        password_field = wait.until(EC.visibility_of_element_located(SignupPageLocators.PASSWORD_FIELD))
+        password_field.send_keys(null_username_password_sign)
+        self.driver.find_element(*SignupPageLocators.SIGNUP_BUTTON).click()
+        time.sleep(3)
+        try:
+            alert = self.driver.switch_to.alert
+            alert_text = alert.text
+            alert.accept()
+        except NoAlertPresentException:
+            print("No alert present")
+        self.driver.refresh()
+        time.sleep(5)
+    def testSignupNullUsername(self):
+        wait = WebDriverWait(self.driver, 10)
+        signup_link = wait.until(EC.element_to_be_clickable(SignupPageLocators.SIGNUP_LINK))
+        self.driver.execute_script("arguments[0].click();", signup_link)
+        wait.until(EC.visibility_of_element_located(SignupPageLocators.SIGNUP_MODAL))
+        username_field = wait.until(EC.visibility_of_element_located(SignupPageLocators.USERNAME_FIELD))
+        self.driver.execute_script(f"arguments[0].value='{null_username_sign}';", username_field)
+        password_field = wait.until(EC.visibility_of_element_located(SignupPageLocators.PASSWORD_FIELD))
+        password_field.send_keys(null_username_password_sign)
+        self.driver.find_element(*SignupPageLocators.SIGNUP_BUTTON).click()
+        time.sleep(3)
+        try:
+            alert = self.driver.switch_to.alert
+            alert_text = alert.text
+            alert.accept()
+        except NoAlertPresentException:
+            print("No alert present")
+        self.driver.refresh()
+        time.sleep(5)
+    
+def sort_test_methods(self, method1, method2):
+    order = {
+        "testSignup": 0,
+        "testSignupExistingUser": 1,
+        "testSignupNullUsername": 2,        
+        "testSignupNullPassword": 3       
+    }
+    return order[method1] - order[method2]
+
+unittest.TestLoader.sortTestMethodsUsing = sort_test_methods
+
+if __name__ == "__main__":
+    unittest.main()
